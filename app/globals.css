@@ -1,0 +1,311 @@
+@import "tailwindcss";
+
+/* ── Material Design 3 — Design tokens ───────────────────────────────────── */
+@theme {
+  --color-background:          #1C1B20;
+  --color-foreground:          #E5E6E4;
+  --color-card:                #28272E;
+  --color-card-foreground:     #E5E6E4;
+  --color-primary:             #DA667B;
+  --color-primary-foreground:  #FFFFFF;
+  --color-secondary:           #3891A6;
+  --color-secondary-foreground:#FFFFFF;
+  --color-muted:               #2D2C33;
+  --color-muted-foreground:    #8C8FA0;
+  --color-border:              #48464F;
+  --color-input:               #28272E;
+  --color-ring:                #DA667B;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --font-sans: 'Roboto', system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  background-color: #1C1B20;
+  color: #E5E6E4;
+  font-family: 'Roboto', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+/* ── Material 3 — Outlined text field ───────────────────────────────────── */
+.form-input {
+  display: block;
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  background: transparent;
+  border: 1px solid #48464F;
+  border-radius: 12px;
+  color: #E5E6E4;
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: 400;
+  outline: none;
+  transition: border-color 200ms ease, border-width 200ms ease;
+}
+.form-input:hover:not(:focus) {
+  border-color: #C8C5D0;
+}
+.form-input:focus {
+  border: 2px solid #DA667B;
+  padding: 0 15px; /* compensate 1px extra border */
+}
+.form-input::placeholder {
+  color: #6C6977;
+}
+.form-input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.5) brightness(1.2);
+  cursor: pointer;
+  opacity: 0.6;
+}
+.form-input[type="number"]::-webkit-inner-spin-button {
+  opacity: 0.3;
+}
+
+/* ── Material 3 — Outlined textarea ─────────────────────────────────────── */
+.form-textarea {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  background: transparent;
+  border: 1px solid #48464F;
+  border-radius: 12px;
+  color: #E5E6E4;
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: 400;
+  outline: none;
+  resize: vertical;
+  transition: border-color 200ms ease, border-width 200ms ease;
+  line-height: 1.6;
+}
+.form-textarea:hover:not(:focus) {
+  border-color: #C8C5D0;
+}
+.form-textarea:focus {
+  border: 2px solid #DA667B;
+  padding: 11px 15px;
+}
+.form-textarea::placeholder {
+  color: #6C6977;
+}
+
+/* ── Ghost input (editable day titles) ───────────────────────────────────── */
+.input-ghost {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #E5E6E4;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  padding: 0;
+  width: 100%;
+  cursor: text;
+  letter-spacing: 0.01em;
+}
+.input-ghost::placeholder { color: #6C6977; font-weight: 400; }
+
+.input-ghost-sm {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #9AC8D4;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0;
+  cursor: text;
+}
+.input-ghost-sm::placeholder { color: #6C6977; }
+
+/* ── Form label (M3 "Label Small" above field) ───────────────────────────── */
+.form-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8C8FA0;
+  margin-bottom: 8px;
+}
+
+/* ── Section group label (M3 "Label Large") ──────────────────────────────── */
+.group-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #9AC8D4;
+  margin-bottom: 20px;
+}
+
+/* ── Material Card — elevation level 1 (surface+1) ───────────────────────── */
+.form-card {
+  background: #28272E;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow:
+    0px 1px 2px rgba(0,0,0,0.3),
+    0px 1px 3px 1px rgba(0,0,0,0.15);
+}
+
+/* ── Material 3 — Text button ────────────────────────────────────────────── */
+.btn-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #9AC8D4;
+  padding: 6px 8px;
+  border-radius: 50px;
+  transition: background 200ms ease, color 200ms ease;
+  letter-spacing: 0.01em;
+}
+.btn-link:hover {
+  background: rgba(56, 145, 166, 0.08);
+  color: #C0E3EC;
+}
+
+.btn-link-danger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #8C8FA0;
+  padding: 6px 8px;
+  border-radius: 50px;
+  transition: background 200ms ease, color 200ms ease;
+}
+.btn-link-danger:hover {
+  background: rgba(218, 102, 123, 0.08);
+  color: #DA667B;
+}
+
+/* ── Material 3 — Outlined button ────────────────────────────────────────── */
+.btn-ghost {
+  background: transparent;
+  border: 1px solid #48464F;
+  color: #C8C5D0;
+  border-radius: 50px;
+  height: 40px;
+  padding: 0 24px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: background 200ms ease, border-color 200ms ease;
+  position: relative;
+  overflow: hidden;
+}
+.btn-ghost:hover {
+  background: rgba(200, 197, 208, 0.08);
+  border-color: #C8C5D0;
+}
+
+/* ── Material 3 — Filled button ──────────────────────────────────────────── */
+.btn-primary {
+  background: #DA667B;
+  border: none;
+  color: #FFFFFF;
+  border-radius: 50px;
+  height: 40px;
+  padding: 0 24px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: box-shadow 200ms ease, background 200ms ease;
+  box-shadow: 0px 1px 2px rgba(0,0,0,0.3), 0px 1px 3px 1px rgba(0,0,0,0.15);
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  transition: background 200ms ease;
+  border-radius: inherit;
+}
+.btn-primary:hover::after {
+  background: rgba(255,255,255,0.08);
+}
+.btn-primary:hover {
+  box-shadow: 0px 1px 2px rgba(0,0,0,0.3), 0px 2px 6px 2px rgba(0,0,0,0.15);
+}
+.btn-primary:active::after {
+  background: rgba(255,255,255,0.12);
+}
+.btn-primary:disabled {
+  background: rgba(232,228,240,0.12);
+  color: rgba(232,228,240,0.38);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* ── Material 3 — Icon button (delete) ───────────────────────────────────── */
+.btn-delete {
+  background: transparent;
+  border: none;
+  color: #8C8FA0;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  transition: background 200ms ease, color 200ms ease;
+  flex-shrink: 0;
+}
+.btn-delete:hover {
+  background: rgba(218, 102, 123, 0.12);
+  color: #DA667B;
+}
+
+/* ── Divider ──────────────────────────────────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: #35343B;
+  margin: 24px 0;
+}
+
+/* ── Table header cell ────────────────────────────────────────────────────── */
+.th {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6C6977;
+}
+
+/* ── Row hover (M3 state layer) ──────────────────────────────────────────── */
+.row-hover {
+  border-radius: 8px;
+  transition: background 200ms ease;
+}
+.row-hover:hover { background: rgba(232,228,240,0.05); }
+
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #35343B; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #48464F; }
