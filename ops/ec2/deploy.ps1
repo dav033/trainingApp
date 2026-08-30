@@ -6,7 +6,7 @@ $base = '/home/ec2-user/trainingapp-api'
 if ($Sha -notmatch '^[0-9a-f]{7,64}$') { throw 'SHA inválido.' }
 if (((git -C $workspace status --porcelain) -join "`n").Trim() -ne '') { throw 'El worktree debe estar limpio.' }
 git -C $workspace cat-file -e "$Sha^{commit}"
-Resolve-DnsName training-api.marosconstruction.com -ErrorAction Stop | Out-Null
+Resolve-DnsName training-api.marosconstruction.com -Server 8.8.8.8 -ErrorAction Stop | Out-Null
 
 $preflight = @'
 set -eu
