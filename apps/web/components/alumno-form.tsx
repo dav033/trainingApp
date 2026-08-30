@@ -393,14 +393,14 @@ export function AlumnoForm({ projectId }: { projectId?: string } = {}) {
   // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <div style={{ display: 'flex', width: '100%', height: '100vh', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', width: '100%', height: '100%', overflow: 'hidden' }}>
 
       {/* ── Sidebar — Material Navigation Rail ───────────────────────────────── */}
       <aside style={{
         width: '256px', minWidth: '256px',
         backgroundColor: '#211F26',
         borderRight: '1px solid #35343B',
-        height: '100vh',
+        height: '100%',
         display: 'flex', flexDirection: 'column',
         position: 'sticky', top: 0,
       }}>

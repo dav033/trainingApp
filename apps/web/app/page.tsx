@@ -1,13 +1,15 @@
 import { AlumnoForm } from "@/components/alumno-form";
-import Link from "next/link";
+import { ProjectTabsBar } from "@/components/project-tabs-bar";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-background">
-      <div className="flex h-screen overflow-hidden">
-        <AlumnoForm />
-      </div>
-      <Link href="/projects" style={{ position: "fixed", right: 18, top: 18, color: "#9AC8D4", fontSize: 13 }}>Workspace remoto →</Link>
-    </main>
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: "#1C1B20" }}>
+      <ProjectTabsBar />
+      <main className="h-full bg-background" style={{ flex: 1, overflow: "hidden" }}>
+        <div className="flex h-full overflow-hidden">
+          <AlumnoForm />
+        </div>
+      </main>
+    </div>
   );
 }
