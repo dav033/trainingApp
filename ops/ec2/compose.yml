@@ -4,10 +4,10 @@ services:
       context: ../../
       dockerfile: apps/api/Dockerfile
     restart: unless-stopped
-    env_file: ../../../shared/api.env
+    env_file: /home/ec2-user/trainingapp-api/shared/api.env
     volumes:
-      - ../../../shared/data:/app/data
-      - ../../../shared/backups:/app/backups
+      - /home/ec2-user/trainingapp-api/shared/data:/app/data
+      - /home/ec2-user/trainingapp-api/shared/backups:/app/backups
     expose:
       - "4100"
     networks:
