@@ -40,7 +40,8 @@ export function createSession(res: Response, config: AppConfig) {
   const session = { csrfToken: randomBytes(24).toString("base64url"), createdAt: Date.now() };
   sessions.set(sid, session);
   const value = `${sid}.${signature(sid, config.sessionSecret)}`;
-  const flags = [`training_session=${encodeURIComponent(value)}`, "Path=/", "HttpOnly", "SameSite=Lax", "Max-Age=28800"];
+  const sameSite = config.cookieSecure ? "SameSite=None" : "SameSite=Lax";
+  const flags = [`training_session=${encodeURIComponent(value)}`, "Path=/", "HttpOnly", sameSite, "Max-Age=28800"];
   if (config.cookieSecure) flags.push("Secure");
   res.setHeader("Set-Cookie", flags.join("; "));
   return session;
@@ -49,7 +50,10 @@ export function createSession(res: Response, config: AppConfig) {
 export function destroySession(req: Request, res: Response, config: AppConfig) {
   const current = sessionFromRequest(req, config);
   if (current) sessions.delete(current.sid);
-  res.setHeader("Set-Cookie", "training_session=; Path=/; HttpOnly; Max-Age=0; SameSite=Lax");
+  const sameSite = config.cookieSecure ? "SameSite=None" : "SameSite=Lax";
+  const flags = ["training_session=", "Path=/", "HttpOnly", "Max-Age=0", sameSite];
+  if (config.cookieSecure) flags.push("Secure");
+  res.setHeader("Set-Cookie", flags.join("; "));
 }
 
 export function bearerMatches(req: IncomingMessage, config: AppConfig) {
