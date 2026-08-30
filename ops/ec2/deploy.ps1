@@ -24,7 +24,12 @@ mkdir -p "$base/releases" "$base/shared/data" "$base/shared/backups"
 chmod 700 "$base/shared"
 chmod 600 "$base/shared/api.env"
 '@
-($preflight -replace "`r", "") | ssh n8n-maros 'bash -s'
+$tmpPreflight = [System.IO.Path]::GetTempFileName()
+[System.IO.File]::WriteAllText($tmpPreflight, ($preflight -replace "`r", ""), [System.Text.UTF8Encoding]::new($false))
+scp $tmpPreflight n8n-maros:/tmp/trainingapp-preflight.sh
+if ($LASTEXITCODE -ne 0) { throw "No se pudo copiar el script de preflight (exit $LASTEXITCODE)." }
+Remove-Item $tmpPreflight
+ssh n8n-maros 'bash /tmp/trainingapp-preflight.sh && rm -f /tmp/trainingapp-preflight.sh'
 if ($LASTEXITCODE -ne 0) { throw "Preflight remoto falló (exit $LASTEXITCODE)." }
 
 $remoteStage = "$base/releases/$Sha.staging"
