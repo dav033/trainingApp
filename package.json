@@ -1,46 +1,19 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
+  "name": "training-workspace",
+  "version": "1.0.0",
   "private": true,
-  "engines": {
-    "node": "20.x"
-  },
+  "type": "module",
+  "engines": { "node": ">=20 <23" },
+  "workspaces": ["apps/*", "packages/*"],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@hookform/resolvers": "^5.2.2",
-    "@radix-ui/react-label": "^2.1.8",
-    "@radix-ui/react-slot": "^1.2.4",
-    "@radix-ui/react-tabs": "^1.1.13",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "jspdf": "^4.1.0",
-    "jspdf-autotable": "^5.0.7",
-    "lucide-react": "^0.564.0",
-    "next": "^16.1.6",
-    "pdf-lib": "^1.17.1",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "react-hook-form": "^7.71.1",
-    "tailwind-merge": "^3.4.0",
-    "tailwindcss-animate": "^1.0.7",
-    "zod": "^4.3.6"
-  },
-  "devDependencies": {
-    "@netlify/plugin-nextjs": "^5.14.4",
-    "@tailwindcss/postcss": "^4.1.18",
-    "@types/node": "^25.2.3",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "autoprefixer": "^10.4.24",
-    "eslint": "^9.39.2",
-    "eslint-config-next": "^16.1.6",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.18",
-    "typescript": "^5.9.3"
+    "dev": "npm run dev -w @training/web",
+    "dev:web": "npm run dev -w @training/web",
+    "dev:api": "npm run dev -w @training/api",
+    "build": "npm run build -w @training/contracts && npm run build -w @training/api && npm run build -w @training/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "contracts:generate": "npm run contracts:generate -w @training/contracts",
+    "contracts:check": "node scripts/check-contract-drift.mjs"
   }
 }

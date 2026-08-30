@@ -2,6 +2,9 @@
 
 # dependencies
 /node_modules
+**/node_modules/
+**/.next/
+**/dist/
 /.pnp
 .pnp.js
 .yarn/install-state.gz
@@ -27,6 +30,11 @@ yarn-error.log*
 
 # local env files
 .env*.local
+
+# local API data and secrets
+/data/
+apps/api/.env
+trainingApp-mcp/.env
 
 # vercel
 .vercel

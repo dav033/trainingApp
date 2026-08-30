@@ -1,0 +1,632 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "expectedRevision": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "project": {
+      "type": "object",
+      "properties": {
+        "externalKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 2000
+        }
+      },
+      "required": [
+        "externalKey",
+        "name",
+        "description"
+      ],
+      "additionalProperties": false
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "nombreCompleto": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "edad": {
+          "type": "string",
+          "maxLength": 20
+        },
+        "correo": {
+          "type": "string",
+          "maxLength": 320,
+          "format": "email",
+          "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+        },
+        "fotoFrontal": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "url": {
+                  "type": "string",
+                  "maxLength": 2048,
+                  "format": "uri"
+                },
+                "mimeType": {
+                  "type": "string",
+                  "enum": [
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                    "image/avif"
+                  ]
+                },
+                "byteSize": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 15728640
+                }
+              },
+              "required": [
+                "id",
+                "url",
+                "mimeType",
+                "byteSize"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fotoLateral": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "url": {
+                  "type": "string",
+                  "maxLength": 2048,
+                  "format": "uri"
+                },
+                "mimeType": {
+                  "type": "string",
+                  "enum": [
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                    "image/avif"
+                  ]
+                },
+                "byteSize": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 15728640
+                }
+              },
+              "required": [
+                "id",
+                "url",
+                "mimeType",
+                "byteSize"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fotoPosterior": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "url": {
+                  "type": "string",
+                  "maxLength": 2048,
+                  "format": "uri"
+                },
+                "mimeType": {
+                  "type": "string",
+                  "enum": [
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                    "image/avif"
+                  ]
+                },
+                "byteSize": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 15728640
+                }
+              },
+              "required": [
+                "id",
+                "url",
+                "mimeType",
+                "byteSize"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "controles": {
+          "minItems": 1,
+          "maxItems": 52,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fecha": {
+                "type": "string",
+                "maxLength": 30
+              },
+              "control": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 999
+              },
+              "peso": {
+                "type": "string",
+                "maxLength": 500
+              },
+              "musculo": {
+                "type": "string",
+                "maxLength": 500
+              },
+              "grasa": {
+                "type": "string",
+                "maxLength": 500
+              }
+            },
+            "required": [
+              "fecha",
+              "control",
+              "peso",
+              "musculo",
+              "grasa"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "metodologia": {
+          "type": "object",
+          "properties": {
+            "metodologia": {
+              "type": "string",
+              "maxLength": 4000
+            },
+            "velocidadContraccion": {
+              "type": "string",
+              "maxLength": 500
+            },
+            "objetivo": {
+              "type": "string",
+              "maxLength": 4000
+            },
+            "flexibilidad": {
+              "type": "string",
+              "maxLength": 4000
+            },
+            "metodologiaIntensidad": {
+              "type": "string",
+              "maxLength": 4000
+            },
+            "frecuenciaSemana": {
+              "type": "string",
+              "maxLength": 500
+            },
+            "duracionMicrociclo": {
+              "type": "string",
+              "maxLength": 500
+            },
+            "tiempoRecuperacion": {
+              "type": "string",
+              "maxLength": 500
+            },
+            "duracionPrograma": {
+              "type": "string",
+              "maxLength": 500
+            },
+            "trabajoCardiovascular": {
+              "type": "string",
+              "maxLength": 4000
+            },
+            "tipoFuerza": {
+              "type": "string",
+              "maxLength": 500
+            }
+          },
+          "required": [
+            "metodologia",
+            "velocidadContraccion",
+            "objetivo",
+            "flexibilidad",
+            "metodologiaIntensidad",
+            "frecuenciaSemana",
+            "duracionMicrociclo",
+            "tiempoRecuperacion",
+            "duracionPrograma",
+            "trabajoCardiovascular",
+            "tipoFuerza"
+          ],
+          "additionalProperties": false
+        },
+        "alimentacion": {
+          "type": "object",
+          "properties": {
+            "modeloCarbohidratos": {
+              "type": "string",
+              "maxLength": 4000
+            },
+            "modeloProteinas": {
+              "type": "string",
+              "maxLength": 4000
+            },
+            "modeloGrasas": {
+              "type": "string",
+              "maxLength": 4000
+            },
+            "modeloVitaminasMinerales": {
+              "type": "string",
+              "maxLength": 4000
+            },
+            "modeloAgua": {
+              "type": "string",
+              "maxLength": 4000
+            },
+            "modeloSodio": {
+              "type": "string",
+              "maxLength": 4000
+            }
+          },
+          "required": [
+            "modeloCarbohidratos",
+            "modeloProteinas",
+            "modeloGrasas",
+            "modeloVitaminasMinerales",
+            "modeloAgua",
+            "modeloSodio"
+          ],
+          "additionalProperties": false
+        },
+        "nutricionDias": {
+          "type": "object",
+          "properties": {
+            "entrenosFuertes": {
+              "type": "object",
+              "properties": {
+                "proteina": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "carbohidratos": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "grasa": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "agua": {
+                  "type": "string",
+                  "maxLength": 500
+                }
+              },
+              "required": [
+                "proteina",
+                "carbohidratos",
+                "grasa",
+                "agua"
+              ],
+              "additionalProperties": false
+            },
+            "entrenosMedios": {
+              "type": "object",
+              "properties": {
+                "proteina": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "carbohidratos": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "grasa": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "agua": {
+                  "type": "string",
+                  "maxLength": 500
+                }
+              },
+              "required": [
+                "proteina",
+                "carbohidratos",
+                "grasa",
+                "agua"
+              ],
+              "additionalProperties": false
+            },
+            "soloCardio": {
+              "type": "object",
+              "properties": {
+                "proteina": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "carbohidratos": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "grasa": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "agua": {
+                  "type": "string",
+                  "maxLength": 500
+                }
+              },
+              "required": [
+                "proteina",
+                "carbohidratos",
+                "grasa",
+                "agua"
+              ],
+              "additionalProperties": false
+            },
+            "descanso": {
+              "type": "object",
+              "properties": {
+                "proteina": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "carbohidratos": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "grasa": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "agua": {
+                  "type": "string",
+                  "maxLength": 500
+                }
+              },
+              "required": [
+                "proteina",
+                "carbohidratos",
+                "grasa",
+                "agua"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "entrenosFuertes",
+            "entrenosMedios",
+            "soloCardio",
+            "descanso"
+          ],
+          "additionalProperties": false
+        },
+        "planEntrenamiento": {
+          "type": "object",
+          "properties": {
+            "dias": {
+              "maxItems": 7,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "titulo": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "ejercicios": {
+                    "maxItems": 12,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "nombre": {
+                          "type": "string",
+                          "maxLength": 500
+                        },
+                        "series": {
+                          "type": "string",
+                          "maxLength": 100
+                        },
+                        "repeticiones": {
+                          "type": "string",
+                          "maxLength": 100
+                        }
+                      },
+                      "required": [
+                        "nombre",
+                        "series",
+                        "repeticiones"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "titulo",
+                  "ejercicios"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "dias"
+          ],
+          "additionalProperties": false
+        },
+        "planNutricional": {
+          "type": "object",
+          "properties": {
+            "dias": {
+              "maxItems": 7,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "titulo": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "comidas": {
+                    "maxItems": 30,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "nombre": {
+                          "type": "string",
+                          "maxLength": 200
+                        },
+                        "alimentos": {
+                          "maxItems": 50,
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "nombre": {
+                                "type": "string",
+                                "maxLength": 200
+                              },
+                              "cantidad": {
+                                "type": "string",
+                                "maxLength": 200
+                              }
+                            },
+                            "required": [
+                              "nombre",
+                              "cantidad"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "merienda": {
+                          "type": "string",
+                          "maxLength": 1000
+                        }
+                      },
+                      "required": [
+                        "nombre",
+                        "alimentos"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "titulo",
+                  "comidas"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "dias"
+          ],
+          "additionalProperties": false
+        },
+        "suplementacion": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 500
+              }
+            }
+          },
+          "required": [
+            "items"
+          ],
+          "additionalProperties": false
+        },
+        "ayudasErgogenicas": {
+          "type": "object",
+          "properties": {
+            "descripcion": {
+              "type": "string",
+              "maxLength": 4000
+            }
+          },
+          "required": [
+            "descripcion"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "nombreCompleto",
+        "edad",
+        "correo",
+        "fotoFrontal",
+        "fotoLateral",
+        "fotoPosterior",
+        "controles",
+        "metodologia",
+        "alimentacion",
+        "nutricionDias",
+        "planEntrenamiento",
+        "planNutricional",
+        "suplementacion",
+        "ayudasErgogenicas"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "expectedRevision",
+    "project",
+    "data"
+  ],
+  "additionalProperties": false,
+  "schemaVersion": 1
+}

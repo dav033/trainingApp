@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { AlumnoData, Control } from "@/lib/types";
+import { AlumnoData, AssetRef, Control } from "@/lib/types";
 import { generatePDF } from "@/lib/pdf-generator";
+import { useProjectSync } from "@/hooks/use-project-sync";
 
 const steps = [
   { id: "datos",        label: "Datos personales",  icon: "👤" },
@@ -24,7 +25,15 @@ const sectionTitles: Record<string, string> = {
   suplementos:  "Suplementación",
 };
 
-export function AlumnoForm() {
+const localAsset = (url: string, mimeType = "image/png", byteSize = 0): AssetRef => ({
+  id: `local-${crypto.randomUUID()}`,
+  url,
+  mimeType: mimeType as AssetRef["mimeType"],
+  byteSize,
+});
+const allowedImageTypes = new Set<AssetRef["mimeType"]>(["image/jpeg", "image/png", "image/webp", "image/avif"]);
+
+export function AlumnoForm({ projectId }: { projectId?: string } = {}) {
   const [activeTab, setActiveTab]               = useState("datos");
   const [completedSections, setCompletedSections] = useState<string[]>([]);
   const [isGenerating, setIsGenerating]         = useState(false);
@@ -60,6 +69,7 @@ export function AlumnoForm() {
     suplementacion:    { items: [] },
     ayudasErgogenicas: { descripcion: "" },
   });
+  const sync = useProjectSync(projectId, formData, setFormData);
 
   // ── Handlers (lógica intacta) ──────────────────────────────────────────────
 
@@ -67,8 +77,9 @@ export function AlumnoForm() {
     setFormData(p => ({ ...p, [field]: value }));
 
   const handleImageUpload = (field: "fotoFrontal" | "fotoLateral" | "fotoPosterior", file: File) => {
+    if (!allowedImageTypes.has(file.type as AssetRef["mimeType"])) { alert("Solo se permiten imágenes JPEG, PNG, WebP o AVIF."); return; }
     const reader = new FileReader();
-    reader.onloadend = () => setFormData(p => ({ ...p, [field]: reader.result as string }));
+    reader.onloadend = () => setFormData(p => ({ ...p, [field]: localAsset(reader.result as string, file.type as AssetRef["mimeType"], file.size) }));
     reader.readAsDataURL(file);
   };
 
@@ -284,7 +295,7 @@ export function AlumnoForm() {
       const blob   = await res.blob();
       const reader = new FileReader();
       reader.onloadend = () => {
-        const img = reader.result as string;
+        const img = localAsset(reader.result as string, blob.type || "image/png", blob.size);
         setFormData({
           nombreCompleto: "INGRID HERRERA", edad: "28", correo: "ingrid.herrera@ejemplo.com",
           fotoFrontal: img, fotoLateral: img, fotoPosterior: img,
@@ -504,7 +515,7 @@ export function AlumnoForm() {
           }}>
             <div>
               <p style={{ fontSize: '11px', color: '#9AC8D4', margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 500 }}>
-                Paso {currentIndex + 1} de {steps.length}
+                Paso {currentIndex + 1} de {steps.length} · {sync.status === 'pending' ? 'Guardando…' : sync.status === 'conflict' ? 'Conflicto: conserva tu borrador' : sync.status === 'offline' ? 'Sin conexión' : projectId ? 'Guardado' : 'Local'}
               </p>
               <h1 style={{ fontSize: '24px', fontWeight: 400, color: '#E5E6E4', margin: 0, letterSpacing: '0em' }}>
                 {sectionTitles[activeTab]}
@@ -550,7 +561,7 @@ export function AlumnoForm() {
                       {formData[key] ? (
                         <div style={{ position: 'relative' }}>
                           <img
-                            src={formData[key] as string}
+                            src={formData[key]?.url}
                             alt={key}
                             style={{ width: '100%', height: '130px', objectFit: 'cover', borderRadius: '12px', border: '1px solid #35343B', display: 'block' }}
                           />

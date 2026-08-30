@@ -1,0 +1,20 @@
+services:
+  api:
+    build:
+      context: ../../
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    env_file: ../../../shared/api.env
+    volumes:
+      - ../../../shared/data:/app/data
+      - ../../../shared/backups:/app/backups
+    expose:
+      - "4100"
+    networks:
+      stack_web:
+        aliases:
+          - trainingapp-api
+
+networks:
+  stack_web:
+    external: true

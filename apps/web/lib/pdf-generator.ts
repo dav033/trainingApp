@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 'use client';
 
@@ -5,7 +6,7 @@ import { PDFDocument, PDFPage, PDFFont, rgb, StandardFonts } from 'pdf-lib';
 
 type PdfPage = PDFPage;
 type PdfFont = PDFFont;
-import { AlumnoData, NutricionDia } from './types';
+import { AlumnoData, AssetRef, NutricionDia } from './types';
 
 // Helper functions para verificar si una sección tiene datos
 const hasBasicData = (data: AlumnoData): boolean => {
@@ -659,6 +660,27 @@ export const generatePDF = async (data: AlumnoData) => {
         }
       };
 
+      const embedImageFromAsset = async (asset: AssetRef | null) => {
+        if (!asset) return null;
+        if (asset.url.startsWith('data:')) return embedImageFromDataUrl(asset.url);
+        try {
+          const response = await fetch(asset.url, { credentials: 'include' });
+          if (!response.ok) return null;
+          const blob = await response.blob();
+          if (asset.mimeType === 'image/png') return await finalDoc.embedPng(new Uint8Array(await blob.arrayBuffer()));
+          if (asset.mimeType === 'image/jpeg') return await finalDoc.embedJpg(new Uint8Array(await blob.arrayBuffer()));
+          const bitmap = await createImageBitmap(blob);
+          const canvas = document.createElement('canvas');
+          canvas.width = bitmap.width;
+          canvas.height = bitmap.height;
+          canvas.getContext('2d')?.drawImage(bitmap, 0, 0);
+          bitmap.close();
+          return embedImageFromDataUrl(canvas.toDataURL('image/png'));
+        } catch {
+          return null;
+        }
+      };
+
       const drawChip = (x: number, yTop: number, text: string) => {
         const padX = 10;
         const padY = 5;
@@ -711,7 +733,7 @@ export const generatePDF = async (data: AlumnoData) => {
         w: number,
         h: number,
         label: "Frontal" | "Lateral" | "Posterior",
-        dataUrl: string | null
+        dataUrl: AssetRef | null
       ) => {
         drawCard(x, yTop, w, h);
 
@@ -738,7 +760,7 @@ export const generatePDF = async (data: AlumnoData) => {
         });
 
         if (dataUrl) {
-          const embedded = await embedImageFromDataUrl(dataUrl);
+          const embedded = await embedImageFromAsset(dataUrl);
           if (embedded) {
             drawImageContain(embedded, imgX, yTop - imgPadTop + 4, imgW, imgH);
             return;
