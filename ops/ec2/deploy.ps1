@@ -24,12 +24,16 @@ mkdir -p "$base/releases" "$base/shared/data" "$base/shared/backups"
 chmod 700 "$base/shared"
 chmod 600 "$base/shared/api.env"
 '@
-($preflight -replace "`r`n", "`n") | ssh n8n-maros 'bash -s'
+($preflight -replace "`r", "") | ssh n8n-maros 'bash -s'
+if ($LASTEXITCODE -ne 0) { throw "Preflight remoto falló (exit $LASTEXITCODE)." }
 
 $remoteStage = "$base/releases/$Sha.staging"
 $remoteRelease = "$base/releases/$Sha"
 ssh n8n-maros "set -eu; test ! -e '$remoteStage'; test ! -e '$remoteRelease'; mkdir '$remoteStage'"
+if ($LASTEXITCODE -ne 0) { throw "No se pudo preparar el directorio de staging (exit $LASTEXITCODE)." }
 git -C $workspace archive --format=tar $Sha | ssh n8n-maros "set -eu; tar -xf - -C '$remoteStage'; test -f '$remoteStage/ops/ec2/compose.yml'"
+if ($LASTEXITCODE -ne 0) { throw "No se pudo subir/extraer el release (exit $LASTEXITCODE)." }
 
 ssh n8n-maros "set -eu; export TRAINING_RELEASE_SHA='$Sha'; docker compose -p trainingapp-api -f '$remoteStage/ops/ec2/compose.yml' build api; docker compose -p trainingapp-api -f '$remoteStage/ops/ec2/compose.yml' run --rm api node apps/api/dist/backup.js; mv '$remoteStage' '$remoteRelease'; ln -sfn '$remoteRelease' '$base/current'; docker compose -p trainingapp-api -f '$base/current/ops/ec2/compose.yml' up -d --no-build api; docker compose -p trainingapp-api -f '$base/current/ops/ec2/compose.yml' ps api"
+if ($LASTEXITCODE -ne 0) { throw "Build/activación del release falló (exit $LASTEXITCODE). Revisa el log de arriba; el release NO quedó activado." }
 Write-Host "Release $Sha preparado y activado. Valida HTTPS/WSS y recarga Caddy solo después del healthcheck remoto."
