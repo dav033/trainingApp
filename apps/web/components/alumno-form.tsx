@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { AlumnoData, AssetRef, Control } from "@/lib/types";
 import { generatePDF } from "@/lib/pdf-generator";
 import { useProjectSync } from "@/hooks/use-project-sync";
@@ -34,6 +35,7 @@ const localAsset = (url: string, mimeType = "image/png", byteSize = 0): AssetRef
 const allowedImageTypes = new Set<AssetRef["mimeType"]>(["image/jpeg", "image/png", "image/webp", "image/avif"]);
 
 export function AlumnoForm({ projectId }: { projectId?: string } = {}) {
+  const router = useRouter();
   const [activeTab, setActiveTab]               = useState("datos");
   const [completedSections, setCompletedSections] = useState<string[]>([]);
   const [isGenerating, setIsGenerating]         = useState(false);
@@ -391,6 +393,19 @@ export function AlumnoForm({ projectId }: { projectId?: string } = {}) {
   };
 
   // ── Render ─────────────────────────────────────────────────────────────────
+
+  if (sync.status === 'deleted') {
+    return (
+      <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#1C1B20' }}>
+        <div style={{ textAlign: 'center', maxWidth: 360 }}>
+          <p style={{ fontSize: '32px', margin: '0 0 12px' }}>🗑️</p>
+          <h1 style={{ fontSize: '18px', fontWeight: 500, color: '#E5E6E4', margin: '0 0 8px' }}>Este proyecto fue borrado</h1>
+          <p style={{ color: '#8C8FA0', fontSize: '14px', margin: '0 0 20px' }}>Alguien lo eliminó desde otra pestaña o sesión. Tus cambios locales no se guardarán.</p>
+          <button className="btn-primary" onClick={() => router.push('/projects')}>Ir a proyectos</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: 'flex', width: '100%', height: '100%', overflow: 'hidden' }}>

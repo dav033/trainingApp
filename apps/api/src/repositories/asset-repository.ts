@@ -14,4 +14,10 @@ export class AssetRepository {
     if (!asset) throw new NotFoundError("Asset no encontrado.");
     return asset;
   }
+  listByProject(projectId: string) {
+    return this.db.prepare("SELECT * FROM assets WHERE project_id = ?").all(projectId) as AssetRow[];
+  }
+  deleteByProject(projectId: string) {
+    this.db.prepare("DELETE FROM assets WHERE project_id = ?").run(projectId);
+  }
 }

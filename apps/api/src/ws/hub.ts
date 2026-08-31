@@ -1,6 +1,8 @@
 import type { WebSocket } from "ws";
 
 export type RevisionEvent = { type: "project.revision"; projectId: string; revision: number; source: "browser" | "mcp"; updatedAt: string };
+export type DeletedEvent = { type: "project.deleted"; projectId: string; source: "browser" | "mcp" };
+export type ProjectEvent = RevisionEvent | DeletedEvent;
 
 export class ProjectEventHub {
   private readonly clients = new Map<string, Set<WebSocket>>();
@@ -10,7 +12,7 @@ export class ProjectEventHub {
     this.clients.set(projectId, set);
     socket.once("close", () => { set.delete(socket); if (!set.size) this.clients.delete(projectId); });
   }
-  publish(event: RevisionEvent) {
+  publish(event: ProjectEvent) {
     for (const socket of this.clients.get(event.projectId) ?? []) {
       if (socket.readyState === 1) socket.send(JSON.stringify(event));
     }

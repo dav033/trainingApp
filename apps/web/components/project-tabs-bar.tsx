@@ -4,44 +4,34 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { createProject, listProjects, type ProjectListItem } from "@/lib/api/client";
 import { createBlankAlumnoData } from "@/lib/blank-project";
-
-type Tab = { id: string; name: string; externalKey: string };
-const STORAGE_KEY = "training-workspace:tabs";
-
-function loadTabs(): Tab[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "[]");
-    return Array.isArray(raw) ? raw : [];
-  } catch { return []; }
-}
-
-function saveTabs(tabs: Tab[]) {
-  try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(tabs)); } catch { /* localStorage unavailable */ }
-}
+import { loadOpenTabs, saveOpenTabs, PROJECTS_CHANGED_EVENT, type OpenTab } from "@/lib/open-tabs";
 
 export function ProjectTabsBar() {
   const pathname = usePathname();
   const router = useRouter();
   const activeId = pathname?.match(/^\/projects\/([^/]+)$/)?.[1] ?? null;
 
-  const [tabs, setTabs] = useState<Tab[]>([]);
+  const [tabs, setTabs] = useState<OpenTab[]>([]);
   const [allProjects, setAllProjects] = useState<ProjectListItem[]>([]);
+  const loadedOnce = useRef(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const pickerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { setTabs(loadTabs()); }, []);
+  useEffect(() => { setTabs(loadOpenTabs()); }, []);
 
   useEffect(() => {
-    void listProjects().then((r) => setAllProjects(r.projects)).catch(() => {});
+    const refresh = () => { void listProjects().then((r) => { loadedOnce.current = true; setAllProjects(r.projects); }).catch(() => {}); };
+    refresh();
+    window.addEventListener(PROJECTS_CHANGED_EVENT, refresh);
+    return () => window.removeEventListener(PROJECTS_CHANGED_EVENT, refresh);
   }, [pathname]);
 
-  // Si llegamos a /projects/[id] por un link directo, añade esa pestaña; y refresca nombres.
+  // Añade la pestaña activa si llegamos por link directo, refresca nombres, y quita pestañas de proyectos borrados.
   useEffect(() => {
-    if (allProjects.length === 0) return;
+    if (!loadedOnce.current) return;
     setTabs((prev) => {
-      let next = prev;
-      if (activeId && !prev.some((t) => t.id === activeId)) {
+      let next = prev.filter((t) => allProjects.some((p) => p.id === t.id));
+      if (activeId && !next.some((t) => t.id === activeId)) {
         const found = allProjects.find((p) => p.id === activeId);
         if (found) next = [...next, { id: found.id, name: found.name, externalKey: found.externalKey }];
       }
@@ -49,7 +39,7 @@ export function ProjectTabsBar() {
         const fresh = allProjects.find((p) => p.id === t.id);
         return fresh && (fresh.name !== t.name || fresh.externalKey !== t.externalKey) ? { ...t, name: fresh.name, externalKey: fresh.externalKey } : t;
       });
-      if (next !== prev) saveTabs(next);
+      if (next.length !== prev.length || next.some((t, i) => t !== prev[i])) saveOpenTabs(next);
       return next;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -62,11 +52,11 @@ export function ProjectTabsBar() {
     return () => document.removeEventListener("mousedown", onClick);
   }, [pickerOpen]);
 
-  const openTab = (project: Tab) => {
+  const openTab = (project: OpenTab) => {
     setTabs((prev) => {
       if (prev.some((t) => t.id === project.id)) return prev;
       const next = [...prev, project];
-      saveTabs(next);
+      saveOpenTabs(next);
       return next;
     });
     setPickerOpen(false);
@@ -77,7 +67,7 @@ export function ProjectTabsBar() {
     e.stopPropagation();
     setTabs((prev) => {
       const next = prev.filter((t) => t.id !== id);
-      saveTabs(next);
+      saveOpenTabs(next);
       if (activeId === id) router.push(next.length > 0 ? `/projects/${next[next.length - 1].id}` : "/projects");
       return next;
     });
@@ -86,6 +76,7 @@ export function ProjectTabsBar() {
   const createAndOpen = async () => {
     try {
       const created = await createProject({ externalKey: `project-${Date.now()}`, name: "Nuevo proyecto", description: "", data: createBlankAlumnoData() });
+      window.dispatchEvent(new Event(PROJECTS_CHANGED_EVENT));
       openTab({ id: created.id, name: created.name, externalKey: created.externalKey });
     } catch { /* la creación falló; se puede reintentar desde el selector */ }
   };

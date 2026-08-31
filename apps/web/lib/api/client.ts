@@ -25,6 +25,7 @@ export async function listProjects() { await ensureSession(); return request<{ p
 export async function getProject(id: string) { await ensureSession(); return request<ProjectSnapshot>(`/v1/projects/${encodeURIComponent(id)}`); }
 export async function createProject(input: { externalKey: string; name: string; description: string; data: AlumnoData }) { await ensureSession(); return request<ProjectSnapshot>("/v1/projects", { method: "POST", headers: mutationHeaders(), body: JSON.stringify(input) }); }
 export async function updateProject(id: string, input: { expectedRevision: number; project: { name: string; description: string }; data: AlumnoData }) { await ensureSession(); return request<ProjectSnapshot>(`/v1/projects/${encodeURIComponent(id)}`, { method: "PUT", headers: mutationHeaders(), body: JSON.stringify(input) }); }
+export async function deleteProject(id: string) { await ensureSession(); await request<void>(`/v1/projects/${encodeURIComponent(id)}`, { method: "DELETE", headers: mutationHeaders() }); }
 export async function uploadAsset(projectId: string, field: string, asset: AssetRef) {
   const response = await fetch(asset.url, { credentials: "include" });
   if (!response.ok) throw new Error("No se pudo preparar la imagen.");

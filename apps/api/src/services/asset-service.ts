@@ -47,4 +47,12 @@ export class AssetService {
     if (!filename.startsWith(path.resolve(this.root) + path.sep) || !fs.existsSync(filename)) throw new NotFoundError("Archivo de asset no encontrado.");
     return { ...asset, filename };
   }
+
+  deleteProjectAssets(projectId: string) {
+    for (const asset of this.repository.listByProject(projectId)) {
+      const filename = path.resolve(this.root, asset.relative_path);
+      if (filename.startsWith(path.resolve(this.root) + path.sep)) fs.rmSync(filename, { force: true });
+    }
+    this.repository.deleteByProject(projectId);
+  }
 }

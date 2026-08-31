@@ -35,6 +35,11 @@ export class ProjectRepository {
     return rows.map((row) => this.snapshot(row));
   }
 
+  remove(id: string) {
+    const result = this.db.prepare("DELETE FROM projects WHERE id = ?").run(id);
+    if (result.changes === 0) throw new NotFoundError("Proyecto no encontrado.");
+  }
+
   create(input: { name: string; description: string; externalKey: string; data: ProjectImport["data"] }) {
     return this.mutate(input.externalKey, 0, input, true);
   }

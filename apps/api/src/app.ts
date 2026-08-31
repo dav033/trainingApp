@@ -35,6 +35,14 @@ export function createApp({ db, repository, assets, hub, config }: { db: Databas
     res.status(201).json(result.snapshot);
   });
   app.get("/v1/projects/:projectId", authenticated, (req, res) => res.json(repository.getById(String(req.params.projectId))));
+  app.delete("/v1/projects/:projectId", mutation, (req: AuthenticatedRequest, res) => {
+    const id = String(req.params.projectId);
+    repository.getById(id);
+    assets.deleteProjectAssets(id);
+    repository.remove(id);
+    hub.publish({ type: "project.deleted", projectId: id, source: req.auth?.kind === "mcp" ? "mcp" : "browser" });
+    res.status(204).end();
+  });
   app.put("/v1/projects/:projectId", mutation, (req: AuthenticatedRequest, res) => {
     const body = updateSchema.parse(req.body);
     const result = repository.update(String(req.params.projectId), body.expectedRevision, { ...body.project, data: body.data });
